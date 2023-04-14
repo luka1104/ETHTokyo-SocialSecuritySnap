@@ -1,19 +1,19 @@
 import { useContext } from 'react';
 import styled from 'styled-components';
-import { MetamaskActions, MetaMaskContext } from '../hooks';
 import {
-  connectSnap,
-  getSnap,
-  sendHello,
-  shouldDisplayReconnectButton,
-} from '../utils';
-import {
+  Card,
   ConnectButton,
   InstallFlaskButton,
   ReconnectButton,
-  SendHelloButton,
-  Card,
+  SubscribeButton,
 } from '../components';
+import { MetaMaskContext, MetamaskActions } from '../hooks';
+import {
+  connectSnap,
+  getSnap,
+  shouldDisplayReconnectButton,
+  subscribe,
+} from '../utils';
 
 const Container = styled.div`
   display: flex;
@@ -117,9 +117,9 @@ const Index = () => {
     }
   };
 
-  const handleSendHelloClick = async () => {
+  const handleSubmitClick = async () => {
     try {
-      await sendHello();
+      await subscribe();
     } catch (e) {
       console.error(e);
       dispatch({ type: MetamaskActions.SetError, payload: e });
@@ -129,11 +129,8 @@ const Index = () => {
   return (
     <Container>
       <Heading>
-        Welcome to <Span>template-snap</Span>
+        Welcome to <Span>SocialSecuritySnap</Span>
       </Heading>
-      <Subtitle>
-        Get started by editing <code>src/index.ts</code>
-      </Subtitle>
       <CardContainer>
         {state.error && (
           <ErrorMessage>
@@ -185,12 +182,11 @@ const Index = () => {
         )}
         <Card
           content={{
-            title: 'Send Hello message',
-            description:
-              'Display a custom message within a confirmation screen in MetaMask.',
+            title: 'Subscribe',
+            description: 'Subscribe SocialSecuritySnap.',
             button: (
-              <SendHelloButton
-                onClick={handleSendHelloClick}
+              <SubscribeButton
+                onClick={handleSubmitClick}
                 disabled={!state.installedSnap}
               />
             ),
@@ -202,14 +198,6 @@ const Index = () => {
             !shouldDisplayReconnectButton(state.installedSnap)
           }
         />
-        <Notice>
-          <p>
-            Please note that the <b>snap.manifest.json</b> and{' '}
-            <b>package.json</b> must be located in the server root directory and
-            the bundle must be hosted at the location specified by the location
-            field.
-          </p>
-        </Notice>
       </CardContainer>
     </Container>
   );
