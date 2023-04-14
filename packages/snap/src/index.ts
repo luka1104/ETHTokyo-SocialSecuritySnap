@@ -1,33 +1,90 @@
-import { OnRpcRequestHandler } from '@metamask/snaps-types';
-import { panel, text } from '@metamask/snaps-ui';
+import { OnTransactionHandler } from '@metamask/snaps-types';
+import { divider, heading, panel, text } from '@metamask/snaps-ui';
+
+type WalletAddress = string;
+type ContractAddress = string;
+type InputData = string;
+
+const baseURL = 'http://localhost:3000/api';
+
+const getLensProfile = async (walletAddress: WalletAddress) => {
+  const response = await fetch(
+    `${baseURL}/lens/profile?walletAddress=${walletAddress}`,
+  );
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data;
+};
+
+const getLensFollowing = async (walletAddress: WalletAddress) => {
+  const response = await fetch(
+    `${baseURL}/lens/following?walletAddress=${walletAddress}`,
+  );
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data;
+};
+
+const getGptCompletion = async (
+  contractAddress: ContractAddress,
+  inputData: InputData,
+) => {
+  const response = await fetch(
+    `${baseURL}/gpt/completion?contractaddress=${contractAddress}&inputdata=${inputData}`,
+  );
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data;
+};
 
 /**
- * Handle incoming JSON-RPC requests, sent through `wallet_invokeSnap`.
+ * Handle an incoming transaction, and return any insights.
  *
  * @param args - The request handler args as object.
- * @param args.origin - The origin of the request, e.g., the website that
- * invoked the snap.
- * @param args.request - A validated JSON-RPC request object.
- * @returns The result of `snap_dialog`.
- * @throws If the request method is not valid for this snap.
+ * @param args.transaction - The transaction object.
+ * @returns The transaction insights.
  */
-export const onRpcRequest: OnRpcRequestHandler = ({ origin, request }) => {
-  switch (request.method) {
-    case 'hello':
-      return snap.request({
-        method: 'snap_dialog',
-        params: {
-          type: 'confirmation',
-          content: panel([
-            text(`Hello, **${origin}**!`),
-            text('This custom confirmation is just for display purposes.'),
-            text(
-              'But you can edit the snap source code to make it do something, if you want to!',
-            ),
-          ]),
-        },
-      });
-    default:
-      throw new Error('Method not found.');
-  }
+export const onTransaction: OnTransactionHandler = async ({ transaction }) => {
+  const myWalletAddress = transaction.from?.toString() || 'dummyAddress';
+  const contractAddress = transaction.to?.toString() || 'dummyAddress';
+
+  // const tempAddress = '0xC0B97BF68795A27865c647e801893CC1C3B0d5F6';
+
+  // const [lensProfile, lensFollowing] = await Promise.all([
+  //   getLensProfile(tempAddress),
+  //   getLensFollowing(tempAddress),
+  // ]);
+
+  return {
+    content: panel([
+      heading('contract Insights'),
+      divider(),
+      text('myWalletAddress:'),
+      text(myWalletAddress),
+      text('contractAddress:'),
+      text(contractAddress),
+      heading('lens Insights'),
+      divider(),
+      text('lensProfile:'),
+      // text(lensProfile),
+      text('lensFollowing:'),
+      // text(lensFollowing),
+      heading('GPT Insights'),
+      divider(),
+      text('GPT Insights'),
+      text('**GPT Insights**'),
+    ]),
+  };
 };
