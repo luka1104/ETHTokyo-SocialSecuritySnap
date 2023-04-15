@@ -16,6 +16,7 @@ import {
   setWorldIdToSnaps,
   shouldDisplayReconnectButton,
   subscribe,
+  setSubscribe
 } from '../utils';
 
 const Container = styled.div`
@@ -126,6 +127,10 @@ const Index = () => {
     console.log(res);
   };
 
+  const handleSubscribe = async () => {
+    await setSubscribe();
+  };
+
   // metamaskからwalletAddressを取得する処理
   const getWalletAddress = async () => {
     return await window.ethereum.request({
@@ -141,9 +146,13 @@ const Index = () => {
   useEffect(() => {
     const searchParams = new URLSearchParams(document.location.search);
     const idToken = searchParams.get('id_token');
+    const subscribeToken = searchParams.get('token');
 
     if (idToken) {
       handleVerify(idToken);
+    }
+    if (subscribeToken) {
+      handleSubscribe();
     }
   }, []);
 

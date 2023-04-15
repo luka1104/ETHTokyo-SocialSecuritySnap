@@ -78,4 +78,14 @@ export const getWorldIdFromSnaps = async () => {
   });
 };
 
+export const setSubscribe = async () => {
+  return await window.ethereum.request({
+    method: 'wallet_invokeSnap',
+    params: {
+      snapId: defaultSnapOrigin,
+      request: { method: 'setData', params: { 'subscribe': true } },
+    },
+  });
+};
+
 export const isLocalSnap = (snapId: string) => snapId.startsWith('local:');
