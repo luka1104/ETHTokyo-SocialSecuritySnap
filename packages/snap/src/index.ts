@@ -80,8 +80,8 @@ const verifyWorldIdToken = async (token: string) => {
   }
 
   const data = await response.json();
-  console.log('data', data);
-  return data;
+
+  return data.result;
 };
 
 /**
@@ -100,7 +100,6 @@ export const onTransaction: OnTransactionHandler = async ({
     method: 'snap_manageState',
     params: { operation: 'get' },
   });
-  console.log('worldId', data?.worldId);
 
   if (!data) {
     return {
@@ -112,9 +111,16 @@ export const onTransaction: OnTransactionHandler = async ({
     };
   }
 
-  const result = await verifyWorldIdToken(data.worldId as string);
-
-  console.log('result', result);
+  const verifiedWorldId = await verifyWorldIdToken(data.worldId as string);
+  if (!verifiedWorldId) {
+    return {
+      content: panel([
+        heading('Not a unique human!!'),
+        text('Please prove that you are a unique human.'),
+        copyable('https://eth-tokyo-social-security-snap-app.vercel.app'),
+      ]),
+    };
+  }
 
   const myWalletAddress = transaction.from?.toString();
   const contractAddress = transaction.to?.toString();
@@ -139,26 +145,19 @@ export const onTransaction: OnTransactionHandler = async ({
       getGptCompletion(contractAddress, inputData, extractedChainId),
     ]);
 
-  const isVerifiedWorldId = false;
-  if (!isVerifiedWorldId) {
-    return {
-      content: panel([
-        heading('Not a unique human!!'),
-        text('Please prove that you are a unique human.'),
-        copyable('https://eth-tokyo-social-security-snap-app.vercel.app'),
-      ]),
-    };
-  }
-
   return {
     content: panel([
+      heading('Verified with World ID🌐'),
+      divider(),
+      text(verifiedWorldId.sub),
       heading('Lens Insights🌿'),
       divider(),
       text('LensProfile:'),
-      text(lensProfile.data.handle),
+      text(lensProfile.data?.handle || 'none'),
       text('LensFollowingExecution:'),
-      text(lensApprovedAddressList),
-      heading('GPT Insights🌐'),
+      // text(lensApprovedAddressList || 'none'),
+      text('none'),
+      heading('GPT Insights🤖'),
       divider(),
       text(gptCompletion.data),
     ]),
