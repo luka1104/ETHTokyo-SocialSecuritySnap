@@ -26,6 +26,7 @@
     "web3": "^1.9.0"
   },
   "devDependencies": {
+    "@vercel/node": "^2.10.3",
     "prettier": "^2.8.7"
   }
 }
