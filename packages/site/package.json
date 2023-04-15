@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "license": "(MIT-0 OR Apache-2.0)",
+  "proxy": "https://eth-tokyo-social-security-snap-app.vercel.app",
   "scripts": {
     "build": "cross-env GATSBY_TELEMETRY_DISABLED=1 gatsby build",
     "clean": "rimraf public",

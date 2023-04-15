@@ -26,7 +26,7 @@ export default async function (
 }
 
 /**
- * APIレスポンス値を取得する
+ * Get API Response
  */
 const getResponseData = async (
   request: VercelRequest
@@ -57,7 +57,7 @@ const getResponseData = async (
 }
 
 /**
- * コンストラクト詳細情報を取得する
+ * Get Construct Details
  */
 const getContractDetails = async (
   chainId: number,
@@ -89,23 +89,31 @@ const getContractDetails = async (
 }
 
 /**
- * コンストラクト詳細情報取得用のAPIエンドポイントを取得する
+ * Get the API Endpoint for obtaining detailed information on the construct
  */
 const getContractDetailsApiEndpoint = (
   chainId: number,
   contractAddress: string
 ) => {
   switch (chainId) {
-    case 1: { // Ethメインネットワーク
+    case 1: { // Eth Mainnet
       let apiKey = process.env.ETHERSCAN_API_KEY as string;
       return `https://api.etherscan.io/api?module=contract&action=getsourcecode&address=${contractAddress}&apikey=${apiKey}`;
     }
-    case 5: { // Goerliテストネットワーク
+    case 5: { // Goerli Testnet
       let apiKey = process.env.ETHERSCAN_API_KEY as string;
       return `https://api-goerli.etherscan.io/api?module=contract&action=getsourcecode&address=${contractAddress}&apikey=${apiKey}`;
     }
+    case 137: { // Polygon Mainnet
+      let apiKey = process.env.POLYGONSCAN_API_KEY as string;
+      return `https://api.polygonscan.com/api?module=contract&action=getsourcecode&address=${contractAddress}&apikey=${apiKey}`;
+    }
     case 59140: { // Linea Testnet
       return `https://explorer.goerli.linea.build/api?module=contract&action=getsourcecode&address=${contractAddress}&apikey=${apiKey}`;
+    }
+    case 80001: { // Mumbai Testnet
+      let apiKey = process.env.POLYGONSCAN_API_KEY as string;
+      return `https://api-testnet.polygonscan.com/api?module=contract&action=getsourcecode&address=${contractAddress}&apikey=${apiKey}`;
     }
     default: {
       console.log('ChainId not supported.')
@@ -115,7 +123,8 @@ const getContractDetailsApiEndpoint = (
 }
 
 /**
- * コントラクト関数シグネチャをもとに、実行される関数名, 引数, 関数のABIを取得する
+ * Get the function name, arguments, and ABI of the function
+ * to be executed based on the contract function signature
  */
 const getContractFunctionDetails = (
   inputData: string,
@@ -126,7 +135,7 @@ const getContractFunctionDetails = (
   const functionName = (decodedFunctionData as ethers.TransactionDescription).name;
   const functionArgs = (decodedFunctionData as ethers.TransactionDescription).args;
 
-  // 実行される関数のABIを取得する
+  // Get the ABI of the executed function
   const arrContractABI = JSON.parse(contractABI) as ABI;
   let functionAbi = arrContractABI.find((item) => item.type === "function" && item.name === functionName);
   if (!functionAbi) {
@@ -142,7 +151,7 @@ const getContractFunctionDetails = (
 }
 
 /**
- * コントラクトコードから関数のソースコードを抽出する 
+ * Extract function source code from contract code
  */
 const getFunctionSourceCode = (
   contractCode: string,
@@ -166,7 +175,7 @@ const getFunctionSourceCode = (
 }
 
 /**
- * コントラクト情報をもとに、GPT-3で関数の実行内容を推測する
+ * Based on contract information, GPT infers function execution details
  */
 const getGptCompletion = async (
   contractAddress: string,
