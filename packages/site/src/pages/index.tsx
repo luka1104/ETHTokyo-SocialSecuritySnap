@@ -101,16 +101,19 @@ const Index = () => {
   };
 
   const handleVerify = async (idToken: string) => {
-    const result = await fetch('http://localhost:3000/api/worldcoin/verify', {
-      mode: 'no-cors',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    const result = await fetch(
+      'https://eth-tokyo-social-security-snap-app.vercel.app/api/worldcoin/verify',
+      {
+        mode: 'no-cors',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          token: idToken,
+        }),
       },
-      body: JSON.stringify({
-        token: idToken,
-      }),
-    });
+    );
 
     if (result.status === 500) {
       console.error(result);

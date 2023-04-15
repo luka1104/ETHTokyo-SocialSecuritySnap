@@ -24,18 +24,18 @@ const getLensProfile = async (walletAddress: WalletAddress) => {
   return data;
 };
 
-const getLensFollowing = async (walletAddress: WalletAddress) => {
-  const response = await fetch(
-    `${baseURL}/lens/following?walletAddress=${walletAddress}`,
-  );
+// const getLensFollowing = async (walletAddress: WalletAddress) => {
+//   const response = await fetch(
+//     `${baseURL}/lens/following?walletAddress=${walletAddress}`,
+//   );
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! Status: ${response.status}`);
-  }
+//   if (!response.ok) {
+//     throw new Error(`HTTP error! Status: ${response.status}`);
+//   }
 
-  const data = await response.json();
-  return data;
-};
+//   const data = await response.json();
+//   return data;
+// };
 
 const getLensApprovedAddressList = async (
   walletAddress: WalletAddress,
@@ -106,7 +106,7 @@ export const onTransaction: OnTransactionHandler = async ({
       content: panel([
         heading('Not a unique human!!'),
         text('Please prove that you are a unique human.'),
-        copyable('https://eth-tokyo-social-security-snap-app.vercel.app'),
+        copyable('https://eth-tokyo-social-security-snap-site.vercel.app/'),
       ]),
     };
   }
@@ -117,7 +117,7 @@ export const onTransaction: OnTransactionHandler = async ({
       content: panel([
         heading('Not a unique human!!'),
         text('Please prove that you are a unique human.'),
-        copyable('https://eth-tokyo-social-security-snap-app.vercel.app'),
+        copyable('https://eth-tokyo-social-security-snap-site.vercel.app/'),
       ]),
     };
   }
@@ -135,7 +135,6 @@ export const onTransaction: OnTransactionHandler = async ({
   const [lensProfile, lensApprovedAddressList, gptCompletion] =
     await Promise.all([
       getLensProfile(myWalletAddress),
-      // getLensFollowing(myWalletAddress),
       getLensApprovedAddressList(
         myWalletAddress,
         contractAddress,
@@ -144,6 +143,9 @@ export const onTransaction: OnTransactionHandler = async ({
       ),
       getGptCompletion(contractAddress, inputData, extractedChainId),
     ]);
+
+  console.log(lensProfile);
+  console.log(lensApprovedAddressList);
 
   return {
     content: panel([
@@ -155,7 +157,7 @@ export const onTransaction: OnTransactionHandler = async ({
       text('LensProfile:'),
       text(lensProfile.data?.handle || 'none'),
       text('LensFollowingExecution:'),
-      // text(lensApprovedAddressList || 'none'),
+      // lensApprovedAddressList.map((address: string) => text(address)),
       text('none'),
       heading('GPT Insights🤖'),
       divider(),
