@@ -73,7 +73,7 @@ const getApprovedAddressList = async (
     const functionName = contractFunctionDetails.functionName;
     const functionArgs = contractFunctionDetails.functionArgs;
 
-    let approvedAddressList = [];
+    let approvedAddressList:[] = [];
     if (functionName === 'setApprovalForAll') {
       approvedAddressList =  await checkIsApprovedForAll(contractAddress, ownedByAddresses, functionArgs[0], Number(chainId));
     }
@@ -85,13 +85,13 @@ const getApprovedAddressList = async (
 const checkIsApprovedForAll = async (contractAddress:any, ownerAddresses: any, operatorAddress: any, chainId: any) => {
   const rpcUrl = getRpcUrl(chainId);
   const provider = new ethers.JsonRpcProvider(rpcUrl as string);
-  const erc721Contract = new ethers.Contract(
+  const NftContract = new ethers.Contract(
     contractAddress, 
     ["function isApprovedForAll(address _owner, address _operator) external view returns (bool)"],
     provider);
-  const approvedForAllAddress = [];
+  const approvedForAllAddress:[] = [];
   for (const ownerAddress of ownerAddresses) {
-    const isApproved = await erc721Contract.isApprovedForAll(ownerAddress.walletAddress, operatorAddress);
+    const isApproved = await NftContract.isApprovedForAll(ownerAddress.walletAddress, operatorAddress);
     if (isApproved) {
       approvedForAllAddress.push(ownerAddress.hundle as never);
     }
