@@ -75,98 +75,55 @@ const getContractDetails = async (
   chainId: number,
   contractAddress: string
 ) => {
+  const apiUri = getContractDetailsApiEndpoint(chainId, contractAddress);
+  if (!apiUri) {
+    return false;
+  }
+
+  const response = await axios.get(apiUri);
+  const result = response.data.result;
+  if (!(result && result[0])) {
+    return false;
+  }
+
+  const contractName = result[0].ContractName;
+  const contractCode = result[0].SourceCode;
+  const abi = result[0].ABI;
+  if (!contractName || !contractCode || !abi) {
+    return false;
+  }
+
+  return {
+    contractName: contractName,
+    contractCode: contractCode,
+    abi: abi
+  };
+}
+
+/**
+ * コンストラクト詳細情報取得用のAPIエンドポイントを取得する
+ */
+const getContractDetailsApiEndpoint = (
+  chainId: number,
+  contractAddress: string
+) => {
   switch (chainId) {
-    case 1:
-      return await getContractDetailsFromMain(contractAddress);
-    case 4:
-      return await getContractDetailsFromLinea(contractAddress);
-    default:
+    case 1: { // Ethメインネットワーク
+      let apiKey = process.env.ETHERSCAN_API_KEY as string;
+      return `https://api.etherscan.io/api?module=contract&action=getsourcecode&address=${contractAddress}&apikey=${apiKey}`;
+    }
+    case 5: { // Goerliテストネットワーク
+      let apiKey = process.env.ETHERSCAN_API_KEY as string;
+      return `https://api-goerli.etherscan.io//api?module=contract&action=getsourcecode&address=${contractAddress}&apikey=${apiKey}`;
+    }
+    case 59140: { // Linea Testnet
+      return `https://explorer.goerli.linea.build/api?module=contract&action=getsourcecode&address=${contractAddress}&apikey=${apiKey}`;
+    }
+    default: {
       console.log('ChainId not supported.')
       return false;
-  }
-}
-
-/**
- * Ethメインネットチェーンのコンストラクト詳細情報を取得する
- */
-const getContractDetailsFromMain = async (
-  contractAddress: string
-) => {
-  const apiKey = process.env.ETHERSCAN_API_KEY as string;
-  const apiEndpoint = process.env.ETHERSCAN_API_ENDPIINT as string;
-  const apiUri = `${apiEndpoint}/api?module=contract&action=getsourcecode&address=${contractAddress}&apikey=${apiKey}`;
-
-  const response = await axios.get(apiUri);
-  const result = response.data.result;
-  if (!(result && result[0])) {
-    return false;
-  }
-
-  const contractName = result[0].ContractName;
-  const contractCode = result[0].SourceCode;
-  const abi = result[0].ABI;
-  if (!contractName || !contractCode || !abi) {
-    return false;
-  }
-
-  return {
-    contractName: contractName,
-    contractCode: contractCode,
-    abi: abi
-  };
-}
-
-/**
- * Lineaテストネットワークチェーンのコンストラクト詳細情報を取得する
- */
-const getContractDetailsFromLinea = async (
-  contractAddress: string
-) => {
-  const apiEndpoint = process.env.LINEA_EXPLORER_API_ENDPIINT as string;
-  const apiUri = `${apiEndpoint}/api?module=contract&action=getsourcecode&address=${contractAddress}`;
-
-  const response = await axios.get(apiUri);
-  const result = response.data.result;
-  if (!(result && result[0])) {
-    return false;
-  }
-
-  const contractName = result[0].ContractName;
-  const contractCode = result[0].SourceCode;
-  const abi = result[0].ABI;
-  if (!contractName || !contractCode || !abi) {
-    return false;
-  }
-
-  return {
-    contractName: contractName,
-    contractCode: contractCode,
-    abi: abi
-  };
-}
-
-/**
- * コントラクトコードから関数のソースコードを抽出する 
- */
-const getFunctionSourceCode = (
-  contractCode: string,
-  functionName: string
-) => {
-  const delimiter = "function";
-  const stringArray = contractCode.split(delimiter);
-
-  let functionSourceCode = ''
-  stringArray.forEach((item, index) => {
-    const pattern: RegExp = new RegExp(`(${functionName}.*{)`);
-    if (pattern.test(item)) {
-      functionSourceCode += item;
     }
-  });
-
-  if (functionSourceCode === '') {
-    console.log(`Function '${functionName}' not found in contract code.`)
   }
-  return functionSourceCode;
 }
 
 /**
@@ -194,6 +151,30 @@ const getContractFunctionDetails = (
     functionArgs: functionArgs,
     functionAbi: functionAbi,
   }
+}
+
+/**
+ * コントラクトコードから関数のソースコードを抽出する 
+ */
+const getFunctionSourceCode = (
+  contractCode: string,
+  functionName: string
+) => {
+  const delimiter = "function";
+  const stringArray = contractCode.split(delimiter);
+
+  let functionSourceCode = ''
+  stringArray.forEach((item, index) => {
+    const pattern: RegExp = new RegExp(`(${functionName}.*{)`);
+    if (pattern.test(item)) {
+      functionSourceCode += item;
+    }
+  });
+
+  if (functionSourceCode === '') {
+    console.log(`Function '${functionName}' not found in contract code.`)
+  }
+  return functionSourceCode;
 }
 
 /**
