@@ -13,7 +13,7 @@ import {
   connectSnap,
   getSnap,
   shouldDisplayReconnectButton,
-  subscribe
+  subscribe,
 } from '../utils';
 
 const Container = styled.div`
@@ -71,7 +71,7 @@ const ErrorMessage = styled.div`
   }
 `;
 
-const Index = async async () => {
+const Index = async () => {
   const [state, dispatch] = useContext(MetaMaskContext);
   const searchParams = new URLSearchParams(document.location.search);
 
@@ -127,7 +127,6 @@ const Index = async async () => {
   // snapsにworldIdを保存する処理
   // await setWorldIdToSnaps(worldId: string);
   // const res = await getWorldIdFromSnaps();
-
 
   useEffect(() => {
     const idToken = searchParams.get('id_token');
