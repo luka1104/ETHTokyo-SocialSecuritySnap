@@ -1,4 +1,4 @@
-# SocialSecuritySnapp
+# SocialSecuritySnap
 
 ## the project is
 
