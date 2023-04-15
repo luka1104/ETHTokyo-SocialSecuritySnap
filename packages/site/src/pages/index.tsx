@@ -133,7 +133,7 @@ const Index = () => {
   };
 
   const handleVerify = async (idToken: string) => {
-    const res = await fetch('/api/worldcoin/verify', {
+    const resp = await fetch('http://localhost:3000/api/worldcoin/verify', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -143,7 +143,7 @@ const Index = () => {
       }),
     });
 
-    console.log(res);
+    console.log(resp);
   };
 
   useEffect(() => {
