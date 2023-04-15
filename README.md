@@ -1,4 +1,32 @@
-# @metamask/template-snap-monorepo
+# SocialSecuritySnapp
+
+## the project is
+
+MetaMask Snap enhances security through: 1) Lens Protocol integration, displaying contract interactions by followed users to flag potential spam 2) GPT-4 reviewing transaction methods, highlighting risks 3) Worldcoin KYC authentication. Prevent accidental spam contract approvals!
+
+## what it aims to accomplish
+
+This project aims to enhance the Ethereum blockchain wallet, called MetaMask Snap, by developing extensions to improve security, user experience, and provide additional services. MetaMask is a browser extension that allows users to easily manage cryptocurrencies and digital assets, as well as perform transactions. The project's primary goals are as follows:
+
+Lens Protocol Integration for Security Enhancement:
+
+By integrating Lens Protocol, the system will display on MetaMask whether people you follow using the protocol have previously interacted with the smart contract.
+If no one you follow has ever executed the contract, this could indicate potential spam, helping users make informed decisions.
+GPT-4 Integration for Security Enhancement:
+
+Before executing a transaction, the method's purpose and risks will be reviewed using GPT-4, with explanations displayed within MetaMask.
+This feature aims to reduce the likelihood of users inadvertently approving malicious contracts or transactions.
+Worldcoin Authentication for KYC (Know Your Customer) information:
+
+Users will be unable to access services without proper identification and verification.
+This ensures that only verified individuals can participate, enhancing overall security.
+Superfluid Subscription Services:
+
+Superfluid enables subscription services with payments at a per-second granularity.
+This feature allows users to pay for subscription services in real-time, enhancing the overall experience.
+The main issue the project addresses is the lack of transparency and understanding of the transactions being executed on smart contracts. Users may not know or check the details of the transaction, leading to an increased risk of inadvertently approving spam contracts. The integration of Lens Protocol and GPT-4 aims to resolve this issue by improving security measures and providing essential information to users before executing a transaction.
+
+## steps for running locally
 
 This repository demonstrates how to develop a snap with TypeScript. For detailed instructions, see [the MetaMask documentation](https://docs.metamask.io/guide/snaps.html#serving-a-snap-to-your-local-environment).
 
