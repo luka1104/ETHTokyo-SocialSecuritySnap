@@ -24,27 +24,14 @@ const getLensProfile = async (walletAddress: WalletAddress) => {
   return data;
 };
 
-// const getLensFollowing = async (walletAddress: WalletAddress) => {
-//   const response = await fetch(
-//     `${baseURL}/lens/following?walletAddress=${walletAddress}`,
-//   );
-
-//   if (!response.ok) {
-//     throw new Error(`HTTP error! Status: ${response.status}`);
-//   }
-
-//   const data = await response.json();
-//   return data;
-// };
-
-const getLensApprovedAddressList = async (
+const lensTxSendFollowing = async (
   walletAddress: WalletAddress,
   contractAddress: ContractAddress,
   inputData: InputData,
   chainId: ChainId,
 ) => {
   const response = await fetch(
-    `${baseURL}/lens/following?walletAddress=${walletAddress}&contractAddress=${contractAddress}&inputData=${inputData}&chainId=${chainId}`,
+    `${baseURL}/lens/txSendFollowing?walletAddress=${walletAddress}&contractAddress=${contractAddress}&inputData=${inputData}&chainId=${chainId}`,
   );
 
   if (!response.ok) {
@@ -135,7 +122,7 @@ export const onTransaction: OnTransactionHandler = async ({
   const [lensProfile, lensApprovedAddressList, gptCompletion] =
     await Promise.all([
       getLensProfile(myWalletAddress),
-      getLensApprovedAddressList(
+      lensTxSendFollowing(
         myWalletAddress,
         contractAddress,
         inputData,
