@@ -24,8 +24,8 @@ MetaMask Snap enhances security through:
 
 Visit the project website:
 
-https://social-security-snap-landing.vercel.app/
-https://eth-tokyo-social-security-snap-site.vercel.app/
+- https://social-security-snap-landing.vercel.app/
+- https://eth-tokyo-social-security-snap-site.vercel.app/
 
 To run the project locally, use the following commands:
 
