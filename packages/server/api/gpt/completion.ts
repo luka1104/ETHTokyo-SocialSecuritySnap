@@ -109,7 +109,7 @@ const getContractDetailsApiEndpoint = (
       return `https://api.polygonscan.com/api?module=contract&action=getsourcecode&address=${contractAddress}&apikey=${apiKey}`;
     }
     case 59140: { // Linea Testnet
-      return `https://explorer.goerli.linea.build/api?module=contract&action=getsourcecode&address=${contractAddress}&apikey=${apiKey}`;
+      return `https://explorer.goerli.linea.build/api?module=contract&action=getsourcecode&address=${contractAddress}`;
     }
     case 80001: { // Mumbai Testnet
       let apiKey = process.env.POLYGONSCAN_API_KEY as string;
