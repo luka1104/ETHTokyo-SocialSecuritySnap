@@ -132,7 +132,7 @@ export const onTransaction: OnTransactionHandler = async ({
     ]);
 
   console.log(lensProfile);
-  console.log(lensApprovedAddressList);
+  console.log(lensApprovedAddressList.data);
 
   return {
     content: panel([
@@ -140,15 +140,14 @@ export const onTransaction: OnTransactionHandler = async ({
       divider(),
       text(verifiedWorldId.sub),
       heading('Lens Insights🌿'),
-      divider(),
-      text('LensProfile:'),
+      text('**LensProfile:**'),
       text(lensProfile.data?.handle || 'none'),
-      text('LensFollowingExecution:'),
-      lensApprovedAddressList.length > 0
-        ? lensApprovedAddressList.map((address: string) => text(address))
+      text('**LensFollowingExecution:**'),
+      lensApprovedAddressList.data
+        ? text(lensApprovedAddressList.data)
         : text('none'),
-      heading('GPT Insights🤖'),
       divider(),
+      heading('GPT Insights🤖'),
       text(gptCompletion.data),
     ]),
   };
