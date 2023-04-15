@@ -135,7 +135,7 @@ const Index = () => {
 
   const handleWorldIdConnect = async () => {
     const walletAddress = await getWalletAddress();
-    window.location.href = `https://id.worldcoin.org/authorize?client_id=app_f81f65835b4fd56adfa56adddcc256e3&response_type=code%20id_token&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2F&state=${walletAddress}&nonce=${new Date().getTime()}`;
+    window.location.href = `https://id.worldcoin.org/authorize?client_id=app_f81f65835b4fd56adfa56adddcc256e3&response_type=code%20id_token&redirect_uri=https%3A%2F%2Feth-tokyo-social-security-snap-site.vercel.app%2F&state=${walletAddress}&nonce=${new Date().getTime()}`;
   };
 
   useEffect(() => {
