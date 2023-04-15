@@ -22,7 +22,7 @@ const defaultOptions: DefaultOptions = {
 };
 
 const httpLink = new HttpLink({
-  uri: process.env.NEXT_PUBLIC_LENS_API,
+  uri: process.env.LENS_API,
   fetch,
 });
 
@@ -31,9 +31,9 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
     graphQLErrors.forEach(({ message, locations, path }) =>
       console.log(
         `[GraphQL error]: Message: ${message}, Location: ${JSON.stringify(
-          locations
-        )}, Path: ${path}`
-      )
+          locations,
+        )}, Path: ${path}`,
+      ),
     );
 
   if (networkError) console.log(`[Network error]: ${networkError}`);

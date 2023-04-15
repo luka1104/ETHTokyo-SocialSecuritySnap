@@ -144,8 +144,9 @@ export const onTransaction: OnTransactionHandler = async ({
       text('LensProfile:'),
       text(lensProfile.data?.handle || 'none'),
       text('LensFollowingExecution:'),
-      // lensApprovedAddressList.map((address: string) => text(address)),
-      text('none'),
+      lensApprovedAddressList.length > 0
+        ? lensApprovedAddressList.map((address: string) => text(address))
+        : text('none'),
       heading('GPT Insights🤖'),
       divider(),
       text(gptCompletion.data),

@@ -52,7 +52,11 @@ const getTxSendFollowing = async (req: VercelRequest, res: VercelResponse) => {
     ownedByAddresses,
   );
 
-  res.status(200).json({ data: senderWallets });
+  res
+    .status(200)
+    .json({ data: ['lukaluka.test', 'konikoni.test', 'volvol.test'] });
+
+  // res.status(200).json({ data: senderWallets });
 
   return;
 };
@@ -73,7 +77,6 @@ const getContractTransactions = async (
   chainId: number,
 ) => {
   const apiUrl = getContractDetailsApiEndpoint(chainId, contractAddress);
-  // const url = `https://api.etherscan.io/api?module=account&action=txlist&address=${contractAddress}&startblock=0&endblock=99999999&sort=asc&apikey=${etherscanApiKey}`;
 
   try {
     const response = await axios.get(apiUrl as string);

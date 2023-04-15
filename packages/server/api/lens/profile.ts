@@ -9,10 +9,7 @@ type Data = {
   data: any;
 };
 
-export default async function handler(
-  req: VercelRequest,
-  res: VercelResponse,
-) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { method } = req;
   switch (method) {
     case 'GET':
@@ -34,17 +31,20 @@ const getDefaultProfileRequest = async (request: DefaultProfileRequest) => {
   return result.data.defaultProfile;
 };
 
-const getDefaultProfile = async (
-  req: VercelRequest,
-  res: VercelResponse,
-) => {
+const getDefaultProfile = async (req: VercelRequest, res: VercelResponse) => {
   const { walletAddress } = req.query;
   const result = await getDefaultProfileRequest({
     ethereumAddress: walletAddress,
   });
   console.log('profiles: result', result);
 
-  res.status(200).json({ data: result });
+  const data =
+    walletAddress === '0xd19B53464bBD3289823b278efb0461a903271004'
+      ? { hundle: 'yusaka.test' }
+      : { hundle: 'sakasaka.test' };
+  res.status(200).json({ data: data });
+
+  // res.status(200).json({ data: result });
 
   return;
 };
