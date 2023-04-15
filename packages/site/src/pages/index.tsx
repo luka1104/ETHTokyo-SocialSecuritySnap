@@ -71,7 +71,7 @@ const ErrorMessage = styled.div`
   }
 `;
 
-const Index = async () => {
+const Index = () => {
   const [state, dispatch] = useContext(MetaMaskContext);
   const searchParams = new URLSearchParams(document.location.search);
 
