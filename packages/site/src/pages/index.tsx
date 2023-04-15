@@ -12,6 +12,8 @@ import { MetaMaskContext, MetamaskActions } from '../hooks';
 import {
   connectSnap,
   getSnap,
+  getWorldIdFromSnaps,
+  setWorldIdToSnaps,
   shouldDisplayReconnectButton,
   subscribe,
 } from '../utils';
@@ -98,12 +100,9 @@ const Index = () => {
     }
   };
 
-  const handleWorldIdConnect = async () => {
-    window.location.href = `https://id.worldcoin.org/authorize?client_id=app_f81f65835b4fd56adfa56adddcc256e3&response_type=code%20id_token&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2F&state=0x5b30b21781b95B527d99B1459f41B21dDD75FE86&nonce=${new Date().getTime()}`;
-  };
-
   const handleVerify = async (idToken: string) => {
-    const resp = await fetch('http://localhost:3000/api/worldcoin/verify', {
+    const result = await fetch('http://localhost:3000/api/worldcoin/verify', {
+      mode: 'no-cors',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -113,7 +112,15 @@ const Index = () => {
       }),
     });
 
-    console.log(resp);
+    if (result.status === 500) {
+      console.error(result);
+      return;
+    }
+
+    await setWorldIdToSnaps(idToken);
+    const res = await getWorldIdFromSnaps();
+
+    console.log(res);
   };
 
   // metamaskからwalletAddressを取得する処理
@@ -123,9 +130,10 @@ const Index = () => {
     });
   };
 
-  // snapsにworldIdを保存する処理
-  // await setWorldIdToSnaps(worldId: string);
-  // const res = await getWorldIdFromSnaps();
+  const handleWorldIdConnect = async () => {
+    const walletAddress = await getWalletAddress();
+    window.location.href = `https://id.worldcoin.org/authorize?client_id=app_f81f65835b4fd56adfa56adddcc256e3&response_type=code%20id_token&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2F&state=${walletAddress}&nonce=${new Date().getTime()}`;
+  };
 
   useEffect(() => {
     const searchParams = new URLSearchParams(document.location.search);

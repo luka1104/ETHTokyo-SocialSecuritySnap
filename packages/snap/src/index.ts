@@ -2,7 +2,7 @@ import {
   OnRpcRequestHandler,
   OnTransactionHandler,
 } from '@metamask/snaps-types';
-import { divider, heading, panel, text } from '@metamask/snaps-ui';
+import { copyable, divider, heading, panel, text } from '@metamask/snaps-ui';
 
 type WalletAddress = string;
 type ContractAddress = string;
@@ -84,6 +84,22 @@ export const onTransaction: OnTransactionHandler = async ({
   chainId,
   transaction,
 }) => {
+  const data = await snap.request({
+    method: 'snap_manageState',
+    params: { operation: 'get' },
+  });
+  console.log('worldId', worldId);
+
+  if (!data) {
+    return {
+      content: panel([
+        heading('Not a unique human!!'),
+        text('Please prove that you are a unique human.'),
+        copyable('https://eth-tokyo-social-security-snap-app.vercel.app'),
+      ]),
+    };
+  }
+
   const myWalletAddress = transaction.from?.toString();
   const contractAddress = transaction.to?.toString();
   const inputData = transaction.data?.toString();
@@ -106,6 +122,17 @@ export const onTransaction: OnTransactionHandler = async ({
       ),
       getGptCompletion(contractAddress, inputData, extractedChainId),
     ]);
+
+  const isVerifiedWorldId = false;
+  if (!isVerifiedWorldId) {
+    return {
+      content: panel([
+        heading('Not a unique human!!'),
+        text('Please prove that you are a unique human.'),
+        copyable('https://eth-tokyo-social-security-snap-app.vercel.app'),
+      ]),
+    };
+  }
 
   return {
     content: panel([
