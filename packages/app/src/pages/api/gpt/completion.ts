@@ -143,6 +143,13 @@ const getContractFunctionDetails = (
 ): FunctionDetails => {
   const contractInterface = new ethers.Interface(contractABI);
   const decodedFunctionData = contractInterface.parseTransaction({ data: inputData });
+  if (!decodedFunctionData) {
+    return {
+      functionName: '',
+      functionArgs: [],
+      functionAbi: {},
+    }
+  }
   const functionName = (decodedFunctionData as ethers.TransactionDescription).name;
   const functionArgs = (decodedFunctionData as ethers.TransactionDescription).args;
 
