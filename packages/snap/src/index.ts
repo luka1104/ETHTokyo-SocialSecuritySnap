@@ -4,8 +4,9 @@ import { divider, heading, panel, text } from '@metamask/snaps-ui';
 type WalletAddress = string;
 type ContractAddress = string;
 type InputData = string;
+type ChainId = string;
 
-const baseURL = 'http://localhost:3000/api';
+const baseURL = 'https://eth-tokyo-social-security-snap-app.vercel.app/api';
 
 const getLensProfile = async (walletAddress: WalletAddress) => {
   const response = await fetch(
@@ -36,9 +37,10 @@ const getLensFollowing = async (walletAddress: WalletAddress) => {
 const getGptCompletion = async (
   contractAddress: ContractAddress,
   inputData: InputData,
+  chainId: ChainId,
 ) => {
   const response = await fetch(
-    `${baseURL}/gpt/completion?contractaddress=${contractAddress}&inputdata=${inputData}`,
+    `${baseURL}/gpt/completion?contractAddress=${contractAddress}&inputData=${inputData}&chainId=${chainId}`,
   );
 
   if (!response.ok) {
@@ -53,38 +55,41 @@ const getGptCompletion = async (
  * Handle an incoming transaction, and return any insights.
  *
  * @param args - The request handler args as object.
+ * @param args.chainId - The chainId string.
  * @param args.transaction - The transaction object.
  * @returns The transaction insights.
  */
-export const onTransaction: OnTransactionHandler = async ({ transaction }) => {
-  const myWalletAddress = transaction.from?.toString() || 'dummyAddress';
-  const contractAddress = transaction.to?.toString() || 'dummyAddress';
+export const onTransaction: OnTransactionHandler = async ({
+  chainId,
+  transaction,
+}) => {
+  const myWalletAddress = transaction.from?.toString();
+  const contractAddress = transaction.to?.toString();
+  const inputData = transaction.data?.toString();
 
-  // const tempAddress = '0xC0B97BF68795A27865c647e801893CC1C3B0d5F6';
+  if (!myWalletAddress || !contractAddress || !inputData || !chainId) {
+    throw new Error('Missing required parameters');
+  }
 
-  // const [lensProfile, lensFollowing] = await Promise.all([
-  //   getLensProfile(tempAddress),
-  //   getLensFollowing(tempAddress),
-  // ]);
+  const extractedChainId = chainId.split(':')[1];
+
+  const [gptCompletion] = await Promise.all([
+    // getLensProfile(myWalletAddress),
+    // getLensFollowing(myWalletAddress),
+    getGptCompletion(contractAddress, inputData, extractedChainId),
+  ]);
 
   return {
     content: panel([
-      heading('contract Insights'),
+      heading('Lens Insights🌿'),
       divider(),
-      text('myWalletAddress:'),
-      text(myWalletAddress),
-      text('contractAddress:'),
-      text(contractAddress),
-      heading('lens Insights'),
-      divider(),
-      text('lensProfile:'),
+      text('LensProfile:'),
       // text(lensProfile),
-      text('lensFollowing:'),
+      text('LensFollowing:'),
       // text(lensFollowing),
-      heading('GPT Insights'),
+      heading('GPT Insights🌐'),
       divider(),
-      text('GPT Insights'),
-      text('**GPT Insights**'),
+      text(gptCompletion.data),
     ]),
   };
 };
