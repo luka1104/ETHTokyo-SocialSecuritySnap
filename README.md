@@ -32,3 +32,8 @@ To run the project locally, use the following commands:
 ```shell
 yarn install && yarn start
 ```
+
+## Deployed Contract
+
+0xB91BbF3de1F178aA4ea33694a6AfA4d63C1444C9
+https://blockscout.scroll.io/address/0xB91BbF3de1F178aA4ea33694a6AfA4d63C1444C9/
