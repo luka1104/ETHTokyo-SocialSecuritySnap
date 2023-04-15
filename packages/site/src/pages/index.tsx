@@ -73,7 +73,6 @@ const ErrorMessage = styled.div`
 
 const Index = () => {
   const [state, dispatch] = useContext(MetaMaskContext);
-  const searchParams = new URLSearchParams(document.location.search);
 
   const handleConnectClick = async () => {
     try {
@@ -129,12 +128,13 @@ const Index = () => {
   // const res = await getWorldIdFromSnaps();
 
   useEffect(() => {
+    const searchParams = new URLSearchParams(document.location.search);
     const idToken = searchParams.get('id_token');
 
     if (idToken) {
       handleVerify(idToken);
     }
-  }, [searchParams]);
+  }, []);
 
   return (
     <Container>
