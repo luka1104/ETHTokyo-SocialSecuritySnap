@@ -55,7 +55,7 @@ export const getSnap = async (version?: string): Promise<Snap | undefined> => {
  */
 
 export const subscribe = async () => {
-  // TODO:subscribe function by using superfluid
+  window.location.href = 'https://super-token-weld.vercel.app/';
 };
 
 export const setWorldIdToSnaps = async (worldId: string) => {
