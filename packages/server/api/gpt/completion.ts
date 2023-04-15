@@ -104,8 +104,16 @@ const getContractDetailsApiEndpoint = (
       let apiKey = process.env.ETHERSCAN_API_KEY as string;
       return `https://api-goerli.etherscan.io/api?module=contract&action=getsourcecode&address=${contractAddress}&apikey=${apiKey}`;
     }
+    case 137: { // Polygon Mainnet
+      let apiKey = process.env.POLYGONSCAN_API_KEY as string;
+      return `https://api.polygonscan.com/api?module=contract&action=getsourcecode&address=${contractAddress}&apikey=${apiKey}`;
+    }
     case 59140: { // Linea Testnet
       return `https://explorer.goerli.linea.build/api?module=contract&action=getsourcecode&address=${contractAddress}&apikey=${apiKey}`;
+    }
+    case 80001: { // Mumbai Testnet
+      let apiKey = process.env.POLYGONSCAN_API_KEY as string;
+      return `https://api-testnet.polygonscan.com/api?module=contract&action=getsourcecode&address=${contractAddress}&apikey=${apiKey}`;
     }
     default: {
       console.log('ChainId not supported.')
