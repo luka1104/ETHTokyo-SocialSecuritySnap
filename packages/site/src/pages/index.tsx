@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import {
   Card,
@@ -6,6 +6,7 @@ import {
   InstallFlaskButton,
   ReconnectButton,
   SubscribeButton,
+  WorldIdButton,
 } from '../components';
 import { MetaMaskContext, MetamaskActions } from '../hooks';
 import {
@@ -101,6 +102,7 @@ const ErrorMessage = styled.div`
 
 const Index = () => {
   const [state, dispatch] = useContext(MetaMaskContext);
+  const searchParams = new URLSearchParams(document.location.search);
 
   const handleConnectClick = async () => {
     try {
@@ -125,6 +127,32 @@ const Index = () => {
       dispatch({ type: MetamaskActions.SetError, payload: e });
     }
   };
+
+  const handleWorldIdConnect = async () => {
+    window.location.href = `https://id.worldcoin.org/authorize?client_id=app_f81f65835b4fd56adfa56adddcc256e3&response_type=code%20id_token&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2F&state=0x5b30b21781b95B527d99B1459f41B21dDD75FE86&nonce=${new Date().getTime()}`;
+  };
+
+  const handleVerify = async (idToken: string) => {
+    const res = await fetch('/api/worldcoin/verify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        token: idToken,
+      }),
+    });
+
+    console.log(res);
+  };
+
+  useEffect(() => {
+    const idToken = searchParams.get('id_token');
+
+    if (idToken) {
+      handleVerify(idToken);
+    }
+  }, [searchParams]);
 
   return (
     <Container>
@@ -187,6 +215,24 @@ const Index = () => {
             button: (
               <SubscribeButton
                 onClick={handleSubmitClick}
+                disabled={!state.installedSnap}
+              />
+            ),
+          }}
+          disabled={!state.installedSnap}
+          fullWidth={
+            state.isFlask &&
+            Boolean(state.installedSnap) &&
+            !shouldDisplayReconnectButton(state.installedSnap)
+          }
+        />
+        <Card
+          content={{
+            title: 'World ID',
+            description: 'Connect with World ID.',
+            button: (
+              <WorldIdButton
+                onClick={handleWorldIdConnect}
                 disabled={!state.installedSnap}
               />
             ),

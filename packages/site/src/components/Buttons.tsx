@@ -98,6 +98,10 @@ export const SubscribeButton = (props: ComponentProps<typeof Button>) => {
   return <Button {...props}>Subscribe</Button>;
 };
 
+export const WorldIdButton = (props: ComponentProps<typeof Button>) => {
+  return <Button {...props}>Verify</Button>;
+};
+
 export const HeaderButtons = ({
   state,
   onConnectClick,

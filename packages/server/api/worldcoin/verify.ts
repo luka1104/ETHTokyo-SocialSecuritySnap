@@ -8,7 +8,7 @@ const verify = async (token: string) => {
   // @ts-ignore
   const { payload, header } = await jose.jwtVerify(token, JWKS, {
     issuer: 'https://id.worldcoin.org',
-    aud: process.env.WORLD_COIN_CLIENT_ID,
+    aud: 'app_f91c6534554696a6072fd51a1d39df92',
   });
   console.log(payload, header);
 
