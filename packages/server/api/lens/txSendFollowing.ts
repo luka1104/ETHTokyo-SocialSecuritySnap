@@ -52,9 +52,7 @@ const getTxSendFollowing = async (req: VercelRequest, res: VercelResponse) => {
     ownedByAddresses,
   );
 
-  res
-    .status(200)
-    .json({ data: ['lukaluka.test', 'konikoni.test', 'volvol.test'] });
+  res.status(200).json({ data: 'lukaluka.test, konikoni.test, volvol.test' });
 
   // res.status(200).json({ data: senderWallets });
 
