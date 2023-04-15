@@ -1,10 +1,7 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import axios from 'axios';
 import { ethers } from 'ethers';
 
-type Data = {
-  data: any;
-}
 type FunctionDetails = {
   functionName: string;
   functionArgs: Array<any>;
@@ -19,31 +16,22 @@ type ABI = Array<{
   anonymous?: boolean;
   constant?: boolean;
 }>;
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>
+ 
+export default async function (
+  request: VercelRequest,
+  response: VercelResponse
 ) {
-  const { method } = req;
-
-  switch (method) {
-    case 'GET':
-      const responseData = await getResponseData(req);
-      res.status(200).json({ 'data': responseData });
-      break;
-    default:
-      res.setHeader('Allow', ['GET']);
-      res.status(405).end(`Method ${method} Not Allowed`);
-  }
+  const responseData = await getResponseData(request);
+  response.status(200).json({ 'data': responseData });
 }
 
 /**
  * APIレスポンス値を取得する
  */
 const getResponseData = async (
-  req: NextApiRequest
+  request: VercelRequest
 ) => {
-  const { contractAddress, inputData } = req.query;
+  const { contractAddress, inputData } = request.query;
   const strContractAddress = contractAddress as string;
   const strInputData = inputData as string;
 
