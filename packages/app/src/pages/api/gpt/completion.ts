@@ -43,14 +43,15 @@ export default async function handler(
 const getResponseData = async (
   req: NextApiRequest
 ) => {
-  const { contractAddress, inputData } = req.query;
+  const { contractAddress, inputData, chainId } = req.query;
   const strContractAddress = contractAddress as string;
   const strInputData = inputData as string;
+  const chainIdNumber = Number(chainId);
 
   try {
     let ResponseData = '';
 
-    const contractDetails = await getContractDetailsFromLinea(strContractAddress);
+    const contractDetails = await getContractDetails(chainIdNumber, strContractAddress);
     if (!contractDetails) {
       ResponseData += '【WARNING】 The safety of the function you are trying to execute cannot be confirmed because it has not verified.';
       return ResponseData;
@@ -71,6 +72,24 @@ const getResponseData = async (
  * コンストラクト詳細情報を取得する
  */
 const getContractDetails = async (
+  chainId: number,
+  contractAddress: string
+) => {
+  switch (chainId) {
+    case 1:
+      return await getContractDetailsFromMain(contractAddress);
+    case 4:
+      return await getContractDetailsFromLinea(contractAddress);
+    default:
+      console.log('ChainId not supported.')
+      return false;
+  }
+}
+
+/**
+ * Ethメインネットチェーンのコンストラクト詳細情報を取得する
+ */
+const getContractDetailsFromMain = async (
   contractAddress: string
 ) => {
   const apiKey = process.env.ETHERSCAN_API_KEY as string;
@@ -98,7 +117,7 @@ const getContractDetails = async (
 }
 
 /**
- * Lineaテストネットワークのコンストラクト詳細情報を取得する
+ * Lineaテストネットワークチェーンのコンストラクト詳細情報を取得する
  */
 const getContractDetailsFromLinea = async (
   contractAddress: string
@@ -193,7 +212,7 @@ const getGptCompletion = async (
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${apiKey}`
   };
-  const content = `・ContractAddress: ${contractAddress}\n・ContractName: ${contractName}\n・FunctionName: ${contractFunctionDetails.functionName}\n・FunctionArgs: ${contractFunctionDetails.functionArgs}\n・FunctionABI: ${contractFunctionDetails.functionAbi}\n・FunctionArgs: ${functionSourceCode}\nPlease tell me what the above smart contract executes.`;
+  const content = `・ContractAddress: ${contractAddress}\n・ContractName: ${contractName}\n・FunctionName: ${contractFunctionDetails.functionName}\n・FunctionArgs: ${contractFunctionDetails.functionArgs}\n・FunctionABI: ${contractFunctionDetails.functionAbi}\n・FunctionSourceCode: ${functionSourceCode}\nPlease tell me what the above smart contract executes.`;
   const data = {
     'model': 'gpt-3.5-turbo',
     'messages': [{

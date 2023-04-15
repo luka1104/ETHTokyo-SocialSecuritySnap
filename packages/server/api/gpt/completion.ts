@@ -200,7 +200,7 @@ const getGptCompletion = async (
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${apiKey}`
   };
-  const content = `・ContractAddress: ${contractAddress}\n・ContractName: ${contractName}\n・FunctionName: ${contractFunctionDetails.functionName}\n・FunctionArgs: ${contractFunctionDetails.functionArgs}\n・FunctionABI: ${contractFunctionDetails.functionAbi}\n・FunctionArgs: ${functionSourceCode}\nPlease tell me what the above smart contract executes.`;
+  const content = `・ContractAddress: ${contractAddress}\n・ContractName: ${contractName}\n・FunctionName: ${contractFunctionDetails.functionName}\n・FunctionArgs: ${contractFunctionDetails.functionArgs}\n・FunctionABI: ${contractFunctionDetails.functionAbi}\n・FunctionSourceCode: ${functionSourceCode}\nPlease tell me what the above smart contract executes.`;
   const data = {
     'model': 'gpt-3.5-turbo',
     'messages': [{
