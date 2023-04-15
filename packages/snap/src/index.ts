@@ -2,7 +2,7 @@ import {
   OnRpcRequestHandler,
   OnTransactionHandler,
 } from '@metamask/snaps-types';
-import { divider, heading, panel, text } from '@metamask/snaps-ui';
+import { copyable, divider, heading, panel, text } from '@metamask/snaps-ui';
 
 type WalletAddress = string;
 type ContractAddress = string;
@@ -24,18 +24,18 @@ const getLensProfile = async (walletAddress: WalletAddress) => {
   return data;
 };
 
-const getLensFollowing = async (walletAddress: WalletAddress) => {
-  const response = await fetch(
-    `${baseURL}/lens/following?walletAddress=${walletAddress}`,
-  );
+// const getLensFollowing = async (walletAddress: WalletAddress) => {
+//   const response = await fetch(
+//     `${baseURL}/lens/following?walletAddress=${walletAddress}`,
+//   );
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! Status: ${response.status}`);
-  }
+//   if (!response.ok) {
+//     throw new Error(`HTTP error! Status: ${response.status}`);
+//   }
 
-  const data = await response.json();
-  return data;
-};
+//   const data = await response.json();
+//   return data;
+// };
 
 const getLensApprovedAddressList = async (
   walletAddress: WalletAddress,
@@ -72,6 +72,18 @@ const getGptCompletion = async (
   return data;
 };
 
+const verifyWorldIdToken = async (token: string) => {
+  const response = await fetch(`${baseURL}/worldcoin/auth?token=${token}`);
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+
+  const data = await response.json();
+
+  return data.result;
+};
+
 /**
  * Handle an incoming transaction, and return any insights.
  *
@@ -84,6 +96,32 @@ export const onTransaction: OnTransactionHandler = async ({
   chainId,
   transaction,
 }) => {
+  const data = await snap.request({
+    method: 'snap_manageState',
+    params: { operation: 'get' },
+  });
+
+  if (!data) {
+    return {
+      content: panel([
+        heading('Not a unique human!!'),
+        text('Please prove that you are a unique human.'),
+        copyable('https://eth-tokyo-social-security-snap-site.vercel.app/'),
+      ]),
+    };
+  }
+
+  const verifiedWorldId = await verifyWorldIdToken(data.worldId as string);
+  if (!verifiedWorldId) {
+    return {
+      content: panel([
+        heading('Not a unique human!!'),
+        text('Please prove that you are a unique human.'),
+        copyable('https://eth-tokyo-social-security-snap-site.vercel.app/'),
+      ]),
+    };
+  }
+
   const myWalletAddress = transaction.from?.toString();
   const contractAddress = transaction.to?.toString();
   const inputData = transaction.data?.toString();
@@ -97,7 +135,6 @@ export const onTransaction: OnTransactionHandler = async ({
   const [lensProfile, lensApprovedAddressList, gptCompletion] =
     await Promise.all([
       getLensProfile(myWalletAddress),
-      // getLensFollowing(myWalletAddress),
       getLensApprovedAddressList(
         myWalletAddress,
         contractAddress,
@@ -107,15 +144,22 @@ export const onTransaction: OnTransactionHandler = async ({
       getGptCompletion(contractAddress, inputData, extractedChainId),
     ]);
 
+  console.log(lensProfile);
+  console.log(lensApprovedAddressList);
+
   return {
     content: panel([
+      heading('Verified with World ID🌐'),
+      divider(),
+      text(verifiedWorldId.sub),
       heading('Lens Insights🌿'),
       divider(),
       text('LensProfile:'),
-      text(lensProfile.data.handle),
+      text(lensProfile.data?.handle || 'none'),
       text('LensFollowingExecution:'),
-      text(lensApprovedAddressList),
-      heading('GPT Insights🌐'),
+      // lensApprovedAddressList.map((address: string) => text(address)),
+      text('none'),
+      heading('GPT Insights🤖'),
       divider(),
       text(gptCompletion.data),
     ]),

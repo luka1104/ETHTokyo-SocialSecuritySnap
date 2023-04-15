@@ -16,7 +16,7 @@ const verify = async (token: string) => {
 };
 
 const handler = async (req: VercelRequest, res: VercelResponse) => {
-  const { token } = JSON.parse(req.body);
+  const token = req.query.token as string;
   const result = await verify(token);
   res.status(200).json({ result });
 };
