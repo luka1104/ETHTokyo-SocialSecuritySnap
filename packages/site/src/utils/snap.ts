@@ -55,7 +55,7 @@ export const getSnap = async (version?: string): Promise<Snap | undefined> => {
  */
 
 export const subscribe = async () => {
-  window.location.href = 'https://super-token-weld.vercel.app/';
+  window.location.href = 'https://social-security-snap-landing.vercel.app/';
 };
 
 export const setWorldIdToSnaps = async (worldId: string) => {
