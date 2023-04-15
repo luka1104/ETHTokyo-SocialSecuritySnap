@@ -72,6 +72,18 @@ const getGptCompletion = async (
   return data;
 };
 
+const verifyWorldIdToken = async (token: string) => {
+  const response = await fetch(`${baseURL}/worldcoin/auth?token=${token}`);
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+
+  const data = await response.json();
+  console.log('data', data);
+  return data;
+};
+
 /**
  * Handle an incoming transaction, and return any insights.
  *
@@ -88,7 +100,7 @@ export const onTransaction: OnTransactionHandler = async ({
     method: 'snap_manageState',
     params: { operation: 'get' },
   });
-  console.log('worldId', worldId);
+  console.log('worldId', data?.worldId);
 
   if (!data) {
     return {
@@ -99,6 +111,10 @@ export const onTransaction: OnTransactionHandler = async ({
       ]),
     };
   }
+
+  const result = await verifyWorldIdToken(data.worldId as string);
+
+  console.log('result', result);
 
   const myWalletAddress = transaction.from?.toString();
   const contractAddress = transaction.to?.toString();
