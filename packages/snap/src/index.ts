@@ -1,4 +1,7 @@
-import { OnTransactionHandler } from '@metamask/snaps-types';
+import {
+  OnRpcRequestHandler,
+  OnTransactionHandler,
+} from '@metamask/snaps-types';
 import { divider, heading, panel, text } from '@metamask/snaps-ui';
 
 type WalletAddress = string;
@@ -92,4 +95,33 @@ export const onTransaction: OnTransactionHandler = async ({
       text(gptCompletion.data),
     ]),
   };
+};
+
+/**
+ * Handle incoming JSON-RPC requests, sent through `wallet_invokeSnap`.
+ *
+ * @param args - The request handler args as object.
+ * invoked the snap.
+ * @param args.request - A validated JSON-RPC request object.
+ * @returns The result of `snap_dialog`.
+ * @throws If the request method is not valid for this snap.
+ */
+export const onRpcRequest: OnRpcRequestHandler = async ({ request }) => {
+  switch (request.method) {
+    case 'setData':
+      return await snap.request({
+        method: 'snap_manageState',
+        params: {
+          operation: 'update',
+          newState: { worldId: request.params.worldId },
+        },
+      });
+    case 'getData':
+      return await snap.request({
+        method: 'snap_manageState',
+        params: { operation: 'get' },
+      });
+    default:
+      throw new Error('Method not found.');
+  }
 };

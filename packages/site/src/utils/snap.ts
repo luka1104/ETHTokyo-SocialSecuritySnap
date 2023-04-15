@@ -55,11 +55,27 @@ export const getSnap = async (version?: string): Promise<Snap | undefined> => {
  */
 
 export const subscribe = async () => {
-  await window.ethereum.request({
+  // TODO:subscribe function by using superfluid
+};
+
+export const setWorldIdToSnaps = async (worldId: string) => {
+  return await window.ethereum.request({
     method: 'wallet_invokeSnap',
-    params: { snapId: defaultSnapOrigin, request: { method: 'hello' } },
+    params: {
+      snapId: defaultSnapOrigin,
+      request: { method: 'setData', params: { worldId } },
+    },
   });
-  // TODO:superfluidのトリガーをかく
+};
+
+export const getWorldIdFromSnaps = async () => {
+  return await window.ethereum.request({
+    method: 'wallet_invokeSnap',
+    params: {
+      snapId: defaultSnapOrigin,
+      request: { method: 'getData' },
+    },
+  });
 };
 
 export const isLocalSnap = (snapId: string) => snapId.startsWith('local:');
