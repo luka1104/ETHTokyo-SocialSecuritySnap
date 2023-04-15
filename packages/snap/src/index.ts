@@ -37,6 +37,24 @@ const getLensFollowing = async (walletAddress: WalletAddress) => {
   return data;
 };
 
+const getLensApprovedAddressList = async (
+  walletAddress: WalletAddress,
+  contractAddress: ContractAddress,
+  inputData: InputData,
+  chainId: ChainId,
+) => {
+  const response = await fetch(
+    `${baseURL}/lens/following?walletAddress=${walletAddress}&contractAddress=${contractAddress}&inputData=${inputData}&chainId=${chainId}`,
+  );
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data;
+};
+
 const getGptCompletion = async (
   contractAddress: ContractAddress,
   inputData: InputData,
@@ -76,20 +94,27 @@ export const onTransaction: OnTransactionHandler = async ({
 
   const extractedChainId = chainId.split(':')[1];
 
-  const [gptCompletion] = await Promise.all([
-    // getLensProfile(myWalletAddress),
-    // getLensFollowing(myWalletAddress),
-    getGptCompletion(contractAddress, inputData, extractedChainId),
-  ]);
+  const [lensProfile, lensApprovedAddressList, gptCompletion] =
+    await Promise.all([
+      getLensProfile(myWalletAddress),
+      // getLensFollowing(myWalletAddress),
+      getLensApprovedAddressList(
+        myWalletAddress,
+        contractAddress,
+        inputData,
+        extractedChainId,
+      ),
+      getGptCompletion(contractAddress, inputData, extractedChainId),
+    ]);
 
   return {
     content: panel([
       heading('Lens Insights🌿'),
       divider(),
       text('LensProfile:'),
-      // text(lensProfile),
-      text('LensFollowing:'),
-      // text(lensFollowing),
+      text(lensProfile.data.handle),
+      text('LensFollowingExecution:'),
+      text(lensApprovedAddressList),
       heading('GPT Insights🌐'),
       divider(),
       text(gptCompletion.data),
